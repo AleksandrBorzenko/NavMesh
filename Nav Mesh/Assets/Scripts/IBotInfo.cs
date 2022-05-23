@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public interface IBot
+public interface IBotInfo
 {
     int damage { get; }
     int health { get; }
@@ -8,6 +8,4 @@ public interface IBot
     void SetDamage(int minDamage, int maxDamage);
     void SetHealth(int minHealth, int maxHealth);
     void SetVelocity(int minVelocity, int maxVelocity);
-    void Attack();
-    void SetMaterial(Material material);
 }

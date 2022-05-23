@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bot : MonoBehaviour, IBot
+public class BotInfo : IBotInfo
 {
     private int _damage;
     private int _health;
@@ -15,11 +15,6 @@ public class Bot : MonoBehaviour, IBot
 
     public int velocity => _velocity;
 
-    public void Attack()
-    {
-        throw new System.NotImplementedException();
-    }
-
     public void SetDamage(int minDamage, int maxDamage)
     {
         _damage = Random.Range(minDamage, maxDamage);
@@ -28,11 +23,6 @@ public class Bot : MonoBehaviour, IBot
     public void SetHealth(int minHealth, int maxHealth)
     {
         _health = Random.Range(minHealth, maxHealth);
-    }
-
-    public void SetMaterial(Material material)
-    {
-        GetComponent<MeshRenderer>().material = material;
     }
 
     public void SetVelocity(int minVelocity, int maxVelocity)
