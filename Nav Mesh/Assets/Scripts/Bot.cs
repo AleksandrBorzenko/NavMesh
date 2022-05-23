@@ -8,31 +8,35 @@ public class Bot : MonoBehaviour, IBot
     private int _health;
     private int _velocity;
 
+
     public int damage => _damage;
 
     public int health => _health;
 
     public int velocity => _velocity;
 
-    public Material material { set => throw new System.NotImplementedException(); }
-
     public void Attack()
     {
         throw new System.NotImplementedException();
     }
 
-    public void SetDamage()
+    public void SetDamage(int minDamage, int maxDamage)
     {
-        throw new System.NotImplementedException();
+        _damage = Random.Range(minDamage, maxDamage);
     }
 
-    public void SetHealth()
+    public void SetHealth(int minHealth, int maxHealth)
     {
-        throw new System.NotImplementedException();
+        _health = Random.Range(minHealth, maxHealth);
     }
 
-    public void SetVelocity()
+    public void SetMaterial(Material material)
     {
-        throw new System.NotImplementedException();
+        GetComponent<MeshRenderer>().material = material;
+    }
+
+    public void SetVelocity(int minVelocity, int maxVelocity)
+    {
+        _velocity = Random.Range(minVelocity, maxVelocity);
     }
 }
