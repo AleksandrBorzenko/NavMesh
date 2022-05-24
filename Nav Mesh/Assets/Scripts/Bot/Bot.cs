@@ -17,13 +17,14 @@ public class Bot : MonoBehaviour, ITarget<Bot>
 
     public Bot targetSign => this;
 
-    public Vector3 position => throw new System.NotImplementedException();
+    public Vector3 position => transform.position;
 
     private BotTargetSearcher botTargetSearcher = new BotTargetSearcher();
 
     void Start()
     {
         SetBotData();
+        botTargetSearcher.GetNearestTarget(transform.position);
     }
     
     public void SetBotData()
