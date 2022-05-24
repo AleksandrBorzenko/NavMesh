@@ -20,9 +20,12 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
+        int spawnNumber = 0;
         for (int i = 0; i < botNumber; i++)
         {
-            SpawnBot(spawnZones[i].position,i);
+            if (spawnNumber >= spawnZones.Length) spawnNumber = 0;
+            SpawnBot(spawnZones[spawnNumber].position,i);
+            spawnNumber++;
         }
     }
 

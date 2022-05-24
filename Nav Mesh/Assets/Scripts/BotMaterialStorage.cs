@@ -18,11 +18,11 @@ public class BotMaterialStorage:IBotMaterial
 
     public Material GetMaterialByIndex(int index)
     {
-        if(index<=materials.Capacity)
+        if(index<materials.Capacity)
             return materials[index];
         else
         {
-            throw new Exception("Index was out of the range");
+            return GetRandom();
         }
     }
 
