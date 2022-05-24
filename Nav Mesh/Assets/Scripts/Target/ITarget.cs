@@ -1,4 +1,8 @@
+using UnityEngine;
+
 public interface ITarget<T>
 {
-    T target { get; }
+    T targetSign { get; }
+
+    Vector3 position { get; }
 }

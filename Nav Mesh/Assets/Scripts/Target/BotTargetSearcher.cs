@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class BotTargetSearcher : IBotTargetSearcher
 {
+    public ITarget<Bot> BoTarget { get; private set; }
     public List<ITarget<Bot>> GetTargets()
     {
         var bots = GameObject.FindObjectsOfType<Bot>();
@@ -17,6 +18,20 @@ public class BotTargetSearcher : IBotTargetSearcher
         }
 
         return targets;
+    }
+
+    public void GetNearestTarget(Vector3 myCurrentPos)
+    {
+        var targets = GetTargets();
+        var arr = new List<float>();
+
+        foreach (var target in targets)
+        {
+            arr.Add(Vector3.Distance(myCurrentPos,target.position));
+        }
+
+        var index = arr.FindIndex(minDistance => minDistance == Mathf.Min(arr.ToArray()));
+        BoTarget = targets[index];
     }
 
 }

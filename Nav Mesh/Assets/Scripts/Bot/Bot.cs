@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Bot : MonoBehaviour, ITarget<Bot>
@@ -14,7 +15,11 @@ public class Bot : MonoBehaviour, ITarget<Bot>
 
     public readonly BotInfo botInfo = new BotInfo();
 
-    public Bot target => this;
+    public Bot targetSign => this;
+
+    public Vector3 position => throw new System.NotImplementedException();
+
+    private BotTargetSearcher botTargetSearcher = new BotTargetSearcher();
 
     void Start()
     {
@@ -32,4 +37,6 @@ public class Bot : MonoBehaviour, ITarget<Bot>
     {
         GetComponent<MeshRenderer>().material = material;
     }
+
+    
 }
