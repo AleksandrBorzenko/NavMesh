@@ -1,7 +1,7 @@
 ﻿
 using UnityEngine;
 
-public class Bot : MonoBehaviour, ITarget
+public class Bot : MonoBehaviour, ITarget<Bot>
 {
     private readonly int minDamage = 1;
     private readonly int maxDamage = 6;
@@ -14,7 +14,7 @@ public class Bot : MonoBehaviour, ITarget
 
     public readonly BotInfo botInfo = new BotInfo();
 
-    public Bot bot => this;
+    public Bot target => this;
 
     void Start()
     {
