@@ -26,7 +26,7 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour
 
     public bool canDamage { get; set; } = true;
 
-    private BotTargetSearcher botTargetSearcher = new BotTargetSearcher();
+    private readonly BotTargetSearcher botTargetSearcher = new BotTargetSearcher();
 
     private NavMeshAgent navMeshAgent;
     private NavMeshPath navMeshPath;
@@ -41,13 +41,10 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour
     {
         SetBotData();
         var targets = botTargetSearcher.GetTargets();
-        if (targets.Count == 0) return;
-        botTargetSearcher.GetNearestTarget(transform.position,targets);
-        if (navMeshAgent.CalculatePath(transform.position, navMeshPath))
-            navMeshAgent.SetDestination(botTargetSearcher.BotTarget.position);
+        FindTarget();
     }
 
-public void SetBotData()
+    public void SetBotData()
     {
         botInfo.SetDamage(minDamage,maxDamage);
         botInfo.SetHealth(minHealth,maxHealth);
@@ -79,7 +76,6 @@ public void SetBotData()
                 navMeshAgent.SetDestination(botTargetSearcher.BotTarget.position);
             }
         }
-    
     }
 
     public IEnumerator DoDamage(ITarget<Bot> target)
@@ -103,6 +99,15 @@ public void SetBotData()
             botInfo.isAlive = false;
             Destroy(gameObject,0.1f);
         }
+    }
+
+    public void FindTarget()
+    {
+        var targets = botTargetSearcher.GetTargets();
+        if (targets.Count == 0) return;
+        botTargetSearcher.GetNearestTarget(transform.position, targets);
+        if (navMeshAgent.CalculatePath(transform.position, navMeshPath))
+            navMeshAgent.SetDestination(botTargetSearcher.BotTarget.position);
     }
 }
 

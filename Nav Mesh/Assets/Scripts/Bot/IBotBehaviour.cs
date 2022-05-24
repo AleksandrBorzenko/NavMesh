@@ -6,4 +6,5 @@ public interface IBotBehaviour
     void TakeDamage(int damage);
     int DelayForDoDamage { get; }
     bool canDamage { get; set; }
+    void FindTarget();
 }
