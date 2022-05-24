@@ -1,6 +1,7 @@
 ﻿
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Bot : MonoBehaviour, ITarget<Bot>
 {
@@ -20,6 +21,13 @@ public class Bot : MonoBehaviour, ITarget<Bot>
     public Vector3 position => transform.position;
 
     private BotTargetSearcher botTargetSearcher = new BotTargetSearcher();
+
+    private NavMeshAgent navMeshAgent;
+
+    void Awake()
+    {
+        navMeshAgent = GetComponent<NavMeshAgent>();
+    }
 
     void Start()
     {
