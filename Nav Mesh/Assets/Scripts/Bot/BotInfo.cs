@@ -4,29 +4,36 @@ using UnityEngine;
 
 public class BotInfo : IBotInfo
 {
-    private int _damage;
-    private int _health;
-    private int _velocity;
+    public int damage { get; private set; }
 
+    public int health { get; private set; }
 
-    public int damage => _damage;
+    public int velocity { get; private set; }
 
-    public int health => _health;
+    public bool isAlive { get; set; } = true;
 
-    public int velocity => _velocity;
+    public void DecreaseHealth(int amount)
+    {
+        health -= amount;
+    }
 
     public void SetDamage(int minDamage, int maxDamage)
     {
-        _damage = Random.Range(minDamage, maxDamage);
+        damage = Random.Range(minDamage, maxDamage);
     }
 
     public void SetHealth(int minHealth, int maxHealth)
     {
-        _health = Random.Range(minHealth, maxHealth);
+        health = Random.Range(minHealth, maxHealth);
+    }
+
+    public void SetHealthToZero()
+    {
+        health = 0;
     }
 
     public void SetVelocity(int minVelocity, int maxVelocity)
     {
-        _velocity = Random.Range(minVelocity, maxVelocity);
+        velocity = Random.Range(minVelocity, maxVelocity);
     }
 }

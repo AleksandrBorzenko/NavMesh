@@ -1,9 +1,11 @@
 ﻿
+using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Bot : MonoBehaviour, ITarget<Bot>
+public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour
 {
     private readonly int minDamage = 1;
     private readonly int maxDamage = 6;
@@ -20,6 +22,10 @@ public class Bot : MonoBehaviour, ITarget<Bot>
 
     public Vector3 position => transform.position;
 
+    public int DelayForDoDamage => 2;
+
+    public bool canDamage { get; set; } = true;
+
     private BotTargetSearcher botTargetSearcher = new BotTargetSearcher();
 
     private NavMeshAgent navMeshAgent;
@@ -34,11 +40,14 @@ public class Bot : MonoBehaviour, ITarget<Bot>
     void Start()
     {
         SetBotData();
-        botTargetSearcher.GetNearestTarget(transform.position);
-        Debug.Log(botTargetSearcher.hasTarget);
+        var targets = botTargetSearcher.GetTargets();
+        if (targets.Count == 0) return;
+        botTargetSearcher.GetNearestTarget(transform.position,targets);
+        if (navMeshAgent.CalculatePath(transform.position, navMeshPath))
+            navMeshAgent.SetDestination(botTargetSearcher.BotTarget.position);
     }
-    
-    public void SetBotData()
+
+public void SetBotData()
     {
         botInfo.SetDamage(minDamage,maxDamage);
         botInfo.SetHealth(minHealth,maxHealth);
@@ -60,8 +69,40 @@ public class Bot : MonoBehaviour, ITarget<Bot>
     {
         if (botTargetSearcher.hasTarget)
         {
-            navMeshAgent.SetDestination(botTargetSearcher.BoTarget.position);
+            if (navMeshAgent.remainingDistance<=navMeshAgent.stoppingDistance) 
+            {
+                    if (botTargetSearcher.BotTarget.targetSign.botInfo.isAlive && canDamage)
+                        StartCoroutine(DoDamage(botTargetSearcher.BotTarget));
+            }
+            else
+            {
+                navMeshAgent.SetDestination(botTargetSearcher.BotTarget.position);
+            }
         }
+    
     }
 
+    public IEnumerator DoDamage(ITarget<Bot> target)
+    {
+        target.targetSign.TakeDamage(botInfo.damage);
+        canDamage = false;
+        yield return new WaitForSeconds(DelayForDoDamage);
+        canDamage = true;
+    }
+
+    public void TakeDamage(int damage)
+    {
+        var isHealthMoreZero = (botInfo.health - damage) > 0;
+        if (isHealthMoreZero)
+        {
+            botInfo.DecreaseHealth(damage);
+        }
+        else
+        {
+            botInfo.SetHealthToZero();
+            botInfo.isAlive = false;
+            Destroy(gameObject,0.1f);
+        }
+    }
 }
+

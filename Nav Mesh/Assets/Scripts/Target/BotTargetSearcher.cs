@@ -7,7 +7,7 @@ public class BotTargetSearcher : IBotTargetSearcher
 {
     private bool _hasTarget;
 
-    public ITarget<Bot> BoTarget { get; private set; }
+    public ITarget<Bot> BotTarget { get; private set; }
 
     public bool hasTarget => _hasTarget;
 
@@ -26,9 +26,8 @@ public class BotTargetSearcher : IBotTargetSearcher
         return targets;
     }
 
-    public void GetNearestTarget(Vector3 myCurrentPos)
+    public void GetNearestTarget(Vector3 myCurrentPos, List<ITarget<Bot>> targets)
     {
-        var targets = GetTargets();
         var arr = new List<float>();
 
         foreach (var target in targets)
@@ -37,8 +36,12 @@ public class BotTargetSearcher : IBotTargetSearcher
         }
 
         var index = arr.FindIndex(minDistance => minDistance == Mathf.Min(arr.ToArray()));
-        BoTarget = targets[index];
+        BotTarget = targets[index];
         _hasTarget = true;
     }
 
+    public float GetDistance(Vector3 myCurrentPos)
+    {
+       return Vector3.Distance(myCurrentPos, myCurrentPos);
+    }
 }
