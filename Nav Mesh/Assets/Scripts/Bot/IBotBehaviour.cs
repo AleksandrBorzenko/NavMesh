@@ -9,6 +9,7 @@ public interface IBotBehaviour
     int DelayForDoDamage { get; }
     bool canDamage { get; set; }
     void FindTarget();
+    void Move();
     UnityEvent TargetLost { get; set; }
     bool isStaying { get; set; }
 

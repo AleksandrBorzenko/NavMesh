@@ -904,7 +904,7 @@ MonoBehaviour:
   - {fileID: 726664624}
   - {fileID: 110499504}
   botContainer: {fileID: 256252568}
-  botNumber: 4
+  botNumber: 8
 --- !u!4 &713870017
 Transform:
   m_ObjectHideFlags: 0

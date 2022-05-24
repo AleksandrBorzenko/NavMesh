@@ -3,6 +3,9 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
 
+/// <summary>
+/// This is a facade for bot's behaviour
+/// </summary>
 public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour,IPlayer
 {
     private readonly int minDamage = 1;
@@ -15,7 +18,9 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour,IPlayer
     private readonly int maxVelocity = 3;
 
     public readonly BotInfo botInfo = new BotInfo();
-
+    /// <summary>
+    /// It's a sign from ITarget
+    /// </summary>
     public Bot targetSign => this;
 
     public Vector3 position => transform.position;
@@ -47,7 +52,9 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour,IPlayer
         SetBotData();
         FindTarget();
     }
-
+    /// <summary>
+    /// Set damage, health, velocity to a bot. Change navMeshAgent's speed. Update HealthScore in UI
+    /// </summary>
     public void SetBotData()
     {
         botInfo.SetDamage(minDamage,maxDamage);
@@ -56,12 +63,19 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour,IPlayer
         botInfo.SetVelocity(minVelocity,maxVelocity);
         navMeshAgent.speed = botInfo.velocity;
     }
-
+    /// <summary>
+    /// Set a material to a bot
+    /// </summary>
+    /// <param name="material">Material</param>
     public void SetMaterial(Material material)
     {
         GetComponent<MeshRenderer>().material = material;
     }
-
+    /// <summary>
+    /// This method is needed in order to not adding yourself to the targets
+    /// </summary>
+    /// <param name="searcher"></param>
+    /// <returns></returns>
     public bool IsThisMySearcher(BotTargetSearcher searcher)
     {
         return botTargetSearcher == searcher;
@@ -78,9 +92,8 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour,IPlayer
             }
             else
             {
-                if (botTargetSearcher.BotTarget.targetSign.botInfo.isAlive)
-                    if (navMeshAgent.CalculatePath(transform.position, navMeshPath))
-                        navMeshAgent.SetDestination(botTargetSearcher.BotTarget.position);
+                if (!botTargetSearcher.BotTarget.targetSign.botInfo.isAlive) return;
+                Move();
             }
         }
         else
@@ -89,7 +102,12 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour,IPlayer
                 FindTarget();
         }
     }
-
+    /// <summary>
+    /// One bot sends another bot a damage (with delay)
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="sender"></param>
+    /// <returns></returns>
     public IEnumerator DoDamage(ITarget<Bot> target, Bot sender)
     {
         target.targetSign.TakeDamage(botInfo.damage,sender);
@@ -97,7 +115,12 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour,IPlayer
         yield return new WaitForSeconds(DelayForDoDamage);
         canDamage = true;
     }
-
+    /// <summary>
+    /// This method increases your bot's health. If a health is lower than 0, bot will be destroyed. Also the sender
+    /// (who destroyed this bot) will increase it's score
+    /// </summary>
+    /// <param name="damage"></param>
+    /// <param name="sender"></param>
     public void TakeDamage(int damage,Bot sender)
     {
         var isHealthMoreZero = (botInfo.health - damage) > 0;
@@ -117,7 +140,9 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour,IPlayer
             Destroy(gameObject); // To Objects pool
         }
     }
-
+    /// <summary>
+    /// Finding a target. If there are not targets bot will stay, otherwise will start moving to the nearest target.
+    /// </summary>
     public void FindTarget()
     {
         var targets = botTargetSearcher.GetTargets();
@@ -128,14 +153,21 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour,IPlayer
         }
         botTargetSearcher.GetNearestTarget(transform.position, targets);
         botTargetSearcher.BotTarget.targetSign.TargetLost.AddListener(TargetSign_TargetLost);
-        if (navMeshAgent.CalculatePath(transform.position, navMeshPath))
-            navMeshAgent.SetDestination(botTargetSearcher.BotTarget.position);
+        Move();
     }
-
+    
     private void TargetSign_TargetLost()
     {
         botTargetSearcher.BotTarget.targetSign.TargetLost.RemoveListener(TargetSign_TargetLost);
         botTargetSearcher.hasTarget = false;
+    }
+    /// <summary>
+    /// Method to move bot to the destination with NavMesh components
+    /// </summary>
+    public void Move()
+    {
+        if (navMeshAgent.CalculatePath(transform.position, navMeshPath))
+            navMeshAgent.SetDestination(botTargetSearcher.BotTarget.position);
     }
 }
 
