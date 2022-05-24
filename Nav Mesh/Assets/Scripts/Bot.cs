@@ -1,7 +1,7 @@
 ﻿
 using UnityEngine;
 
-public class BotController:MonoBehaviour
+public class Bot : MonoBehaviour
 {
     private readonly int minDamage = 1;
     private readonly int maxDamage = 6;
@@ -13,18 +13,16 @@ public class BotController:MonoBehaviour
     private readonly int maxVelocity = 5;
 
     public readonly BotInfo botInfo = new BotInfo();
-    private readonly BotMaterialStorage botMaterialStorage = new BotMaterialStorage();
 
     
-    public void CreateBot()
+    public void SetBotData()
     {
         botInfo.SetDamage(minDamage,maxDamage);
         botInfo.SetHealth(minHealth,maxHealth);
         botInfo.SetVelocity(minVelocity,maxVelocity);
-        SetMaterial(botMaterialStorage.GetRandom());
     }
 
-    void SetMaterial(Material material)
+    public void SetMaterial(Material material)
     {
         GetComponent<MeshRenderer>().material = material;
     }

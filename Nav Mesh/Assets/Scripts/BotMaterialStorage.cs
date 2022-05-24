@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class BotMaterialStorage:IBotMaterial
 {
@@ -10,7 +12,17 @@ public class BotMaterialStorage:IBotMaterial
     {
         for (int i = 0; i < materials.Capacity; i++)
         {
-            materials.Add(Resources.Load<Material>("Materials/BotMaterial" + i.ToString()));
+            materials.Add(Resources.Load<Material>("Materials/BotMaterial" + (i+1).ToString()));
+        }
+    }
+
+    public Material GetMaterialByIndex(int index)
+    {
+        if(index<=materials.Capacity)
+            return materials[index];
+        else
+        {
+            throw new Exception("Index was out of the range");
         }
     }
 
