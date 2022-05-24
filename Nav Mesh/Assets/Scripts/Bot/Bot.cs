@@ -11,8 +11,8 @@ public class Bot : MonoBehaviour, ITarget<Bot>
     private readonly int minHealth = 10;
     private readonly int maxHealth = 20;
 
-    private readonly int minVelocity = 2;
-    private readonly int maxVelocity = 5;
+    private readonly int minVelocity = 1;
+    private readonly int maxVelocity = 3;
 
     public readonly BotInfo botInfo = new BotInfo();
 
