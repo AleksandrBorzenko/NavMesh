@@ -1,5 +1,7 @@
 using UnityEngine;
-
+/// <summary>
+/// Determines the info will be set to the bot
+/// </summary>
 public interface IBotInfo
 {
     int damage { get; }
