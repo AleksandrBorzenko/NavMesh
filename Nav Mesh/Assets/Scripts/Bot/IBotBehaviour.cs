@@ -1,4 +1,6 @@
 using System.Collections;
+using UnityEngine.Events;
+
 
 public interface IBotBehaviour
 {
@@ -7,4 +9,7 @@ public interface IBotBehaviour
     int DelayForDoDamage { get; }
     bool canDamage { get; set; }
     void FindTarget();
+    UnityEvent TargetLost { get; set; }
+    bool isStaying { get; set; }
+
 }

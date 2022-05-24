@@ -1,9 +1,10 @@
-﻿
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour
 {
@@ -25,6 +26,8 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour
     public int DelayForDoDamage => 2;
 
     public bool canDamage { get; set; } = true;
+    public UnityEvent TargetLost { get; set; }
+    public bool isStaying { get; set; }
 
     private readonly BotTargetSearcher botTargetSearcher = new BotTargetSearcher();
 
@@ -33,6 +36,7 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour
 
     void Awake()
     {
+        TargetLost = new UnityEvent();
         navMeshAgent = GetComponent<NavMeshAgent>();
         navMeshPath = new NavMeshPath();
     }
@@ -73,8 +77,15 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour
             }
             else
             {
-                navMeshAgent.SetDestination(botTargetSearcher.BotTarget.position);
+                if (botTargetSearcher.BotTarget.targetSign.botInfo.isAlive)
+                    if (navMeshAgent.CalculatePath(transform.position, navMeshPath))
+                        navMeshAgent.SetDestination(botTargetSearcher.BotTarget.position);
             }
+        }
+        else
+        {
+            if(!isStaying)
+                FindTarget();
         }
     }
 
@@ -97,17 +108,29 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour
         {
             botInfo.SetHealthToZero();
             botInfo.isAlive = false;
-            Destroy(gameObject,0.1f);
+            TargetLost?.Invoke();
+            Destroy(gameObject); // To Objects pool
         }
     }
 
     public void FindTarget()
     {
         var targets = botTargetSearcher.GetTargets();
-        if (targets.Count == 0) return;
+        if (targets.Count == 0)
+        {
+            isStaying = true;
+            return;
+        }
         botTargetSearcher.GetNearestTarget(transform.position, targets);
+        botTargetSearcher.BotTarget.targetSign.TargetLost.AddListener(TargetSign_TargetLost);
         if (navMeshAgent.CalculatePath(transform.position, navMeshPath))
             navMeshAgent.SetDestination(botTargetSearcher.BotTarget.position);
+    }
+
+    private void TargetSign_TargetLost()
+    {
+        botTargetSearcher.BotTarget.targetSign.TargetLost.RemoveListener(TargetSign_TargetLost);
+        botTargetSearcher.hasTarget = false;
     }
 }
 

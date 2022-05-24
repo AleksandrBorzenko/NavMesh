@@ -5,11 +5,9 @@ using UnityEngine;
 
 public class BotTargetSearcher : IBotTargetSearcher
 {
-    private bool _hasTarget;
-
     public ITarget<Bot> BotTarget { get; private set; }
 
-    public bool hasTarget => _hasTarget;
+    public bool hasTarget { get; set; }
 
     public List<ITarget<Bot>> GetTargets()
     {
@@ -37,7 +35,7 @@ public class BotTargetSearcher : IBotTargetSearcher
 
         var index = arr.FindIndex(minDistance => minDistance == Mathf.Min(arr.ToArray()));
         BotTarget = targets[index];
-        _hasTarget = true;
+        hasTarget = true;
     }
 
     public float GetDistance(Vector3 myCurrentPos)
