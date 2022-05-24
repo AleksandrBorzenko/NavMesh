@@ -12,9 +12,16 @@ public class BotInfo : IBotInfo
 
     public bool isAlive { get; set; } = true;
 
+    public int score { get; private set; }
+
     public void DecreaseHealth(int amount)
     {
         health -= amount;
+    }
+
+    public void IncreaseScore()
+    {
+        score++;
     }
 
     public void SetDamage(int minDamage, int maxDamage)

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
 
-public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour
+public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour,IPlayer
 {
     private readonly int minDamage = 1;
     private readonly int maxDamage = 6;
@@ -28,6 +25,8 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour
     public bool canDamage { get; set; } = true;
     public UnityEvent TargetLost { get; set; }
     public bool isStaying { get; set; }
+    public UnityEvent<int> scoreChanged { get; set; }
+    public UnityEvent<int> healthChanged { get; set; }
 
     private readonly BotTargetSearcher botTargetSearcher = new BotTargetSearcher();
 
@@ -37,6 +36,8 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour
     void Awake()
     {
         TargetLost = new UnityEvent();
+        scoreChanged = new UnityEvent<int>();
+        healthChanged = new UnityEvent<int>();
         navMeshAgent = GetComponent<NavMeshAgent>();
         navMeshPath = new NavMeshPath();
     }
@@ -44,7 +45,6 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour
     void Start()
     {
         SetBotData();
-        var targets = botTargetSearcher.GetTargets();
         FindTarget();
     }
 
@@ -52,6 +52,7 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour
     {
         botInfo.SetDamage(minDamage,maxDamage);
         botInfo.SetHealth(minHealth,maxHealth);
+        healthChanged?.Invoke(botInfo.health);
         botInfo.SetVelocity(minVelocity,maxVelocity);
         navMeshAgent.speed = botInfo.velocity;
     }
@@ -73,7 +74,7 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour
             if (navMeshAgent.remainingDistance<=navMeshAgent.stoppingDistance) 
             {
                     if (botTargetSearcher.BotTarget.targetSign.botInfo.isAlive && canDamage)
-                        StartCoroutine(DoDamage(botTargetSearcher.BotTarget));
+                        StartCoroutine(DoDamage(botTargetSearcher.BotTarget,this));
             }
             else
             {
@@ -89,25 +90,29 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour
         }
     }
 
-    public IEnumerator DoDamage(ITarget<Bot> target)
+    public IEnumerator DoDamage(ITarget<Bot> target, Bot sender)
     {
-        target.targetSign.TakeDamage(botInfo.damage);
+        target.targetSign.TakeDamage(botInfo.damage,sender);
         canDamage = false;
         yield return new WaitForSeconds(DelayForDoDamage);
         canDamage = true;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage,Bot sender)
     {
         var isHealthMoreZero = (botInfo.health - damage) > 0;
         if (isHealthMoreZero)
         {
             botInfo.DecreaseHealth(damage);
+            healthChanged?.Invoke(botInfo.health);
         }
         else
         {
             botInfo.SetHealthToZero();
+            healthChanged?.Invoke(botInfo.health);
             botInfo.isAlive = false;
+            sender.botInfo.IncreaseScore();
+            sender.scoreChanged?.Invoke(sender.botInfo.score);
             TargetLost?.Invoke();
             Destroy(gameObject); // To Objects pool
         }
