@@ -33,7 +33,6 @@ public class GameController : MonoBehaviour
     {
         var bot = Instantiate(botPrefab, spawnZone,Quaternion.identity, botContainer);
         bot.GetComponent<Bot>().SetMaterial(botMaterialStorage.GetRandom());
-        bot.GetComponent<Bot>().SetBotData();
     }
 
     void SpawnBot(Vector3 spawnZone, int materialIndex)
@@ -41,6 +40,5 @@ public class GameController : MonoBehaviour
         Vector3 spawnVec = new Vector3(spawnZone.x, 0, spawnZone.z);
         var bot = Instantiate(botPrefab, spawnVec, Quaternion.identity, botContainer);
         bot.GetComponent<Bot>().SetMaterial(botMaterialStorage.GetMaterialByIndex(materialIndex));
-        bot.GetComponent<Bot>().SetBotData();
     }
 }
