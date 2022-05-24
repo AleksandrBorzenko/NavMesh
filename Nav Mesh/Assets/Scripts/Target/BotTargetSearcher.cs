@@ -5,7 +5,12 @@ using UnityEngine;
 
 public class BotTargetSearcher : IBotTargetSearcher
 {
+    private bool _hasTarget;
+
     public ITarget<Bot> BoTarget { get; private set; }
+
+    public bool hasTarget => _hasTarget;
+
     public List<ITarget<Bot>> GetTargets()
     {
         var bots = GameObject.FindObjectsOfType<Bot>();
@@ -14,7 +19,8 @@ public class BotTargetSearcher : IBotTargetSearcher
 
         foreach (var bot in bots)
         {
-            targets.Add(bot.GetComponent<ITarget<Bot>>());
+            if(!bot.IsThisMySearcher(this))
+                targets.Add(bot.GetComponent<ITarget<Bot>>());
         }
 
         return targets;
@@ -32,6 +38,7 @@ public class BotTargetSearcher : IBotTargetSearcher
 
         var index = arr.FindIndex(minDistance => minDistance == Mathf.Min(arr.ToArray()));
         BoTarget = targets[index];
+        _hasTarget = true;
     }
 
 }

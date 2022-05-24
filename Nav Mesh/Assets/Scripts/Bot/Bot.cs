@@ -23,16 +23,19 @@ public class Bot : MonoBehaviour, ITarget<Bot>
     private BotTargetSearcher botTargetSearcher = new BotTargetSearcher();
 
     private NavMeshAgent navMeshAgent;
+    private NavMeshPath navMeshPath;
 
     void Awake()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
+        navMeshPath = new NavMeshPath();
     }
 
     void Start()
     {
         SetBotData();
         botTargetSearcher.GetNearestTarget(transform.position);
+        Debug.Log(botTargetSearcher.hasTarget);
     }
     
     public void SetBotData()
@@ -40,6 +43,7 @@ public class Bot : MonoBehaviour, ITarget<Bot>
         botInfo.SetDamage(minDamage,maxDamage);
         botInfo.SetHealth(minHealth,maxHealth);
         botInfo.SetVelocity(minVelocity,maxVelocity);
+        navMeshAgent.speed = botInfo.velocity;
     }
 
     public void SetMaterial(Material material)
@@ -47,5 +51,17 @@ public class Bot : MonoBehaviour, ITarget<Bot>
         GetComponent<MeshRenderer>().material = material;
     }
 
-    
+    public bool IsThisMySearcher(BotTargetSearcher searcher)
+    {
+        return botTargetSearcher == searcher;
+    }
+
+    void Update()
+    {
+        if (botTargetSearcher.hasTarget)
+        {
+            navMeshAgent.SetDestination(botTargetSearcher.BoTarget.position);
+        }
+    }
+
 }
