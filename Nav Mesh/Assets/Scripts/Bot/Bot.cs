@@ -146,7 +146,7 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour,IPlayer
     }
     /// <summary>
     /// This method increases your bot's health. If a health is lower than 0, bot will be destroyed. Also the sender
-    /// (who destroyed this bot) will increase it's score
+    /// (who destroyed this bot) will increase it's score. If the bot is being destroyed it sends its damage to the bot who destroyed it.
     /// </summary>
     /// <param name="damage"></param>
     /// <param name="sender"></param>
@@ -164,6 +164,7 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour,IPlayer
             healthChanged?.Invoke(botInfo.health);
             botInfo.isAlive = false;
             sender.botInfo.IncreaseScore();
+            sender.botInfo.IncreaseDamage(botInfo.damage);
             sender.scoreChanged?.Invoke(sender.botInfo.score);
             TargetLost?.Invoke();
             Destroy(gameObject); // To Objects pool

@@ -42,6 +42,15 @@ public class BotInfo : IBotInfo
         score++;
     }
     /// <summary>
+    /// Increases the damage of bot after destroying an opponent
+    /// </summary>
+    /// <param name="amount">Destroyed character damage</param>
+    public void IncreaseDamage(int amount)
+    {
+        damage += amount;
+    }
+
+    /// <summary>
     /// Set damage amount to the bot by random
     /// </summary>
     /// <param name="minDamage">Minimum damage</param>
