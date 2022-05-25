@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 /// <summary>
@@ -31,6 +32,10 @@ public class GameController : MonoBehaviour
     /// Caching main camera
     /// </summary>
     private Camera cam;
+    /// <summary>
+    /// Event which is called when new bot added on scene
+    /// </summary>
+    public UnityEvent NewBotAdded;
 
     void Awake()
     {
@@ -61,6 +66,7 @@ public class GameController : MonoBehaviour
         //Vector3 spawnVec = new Vector3(spawnZone.x, 0, spawnZone.z);
         var bot = Instantiate(botPrefab, spawnZone,Quaternion.identity, botContainer);
         bot.GetComponent<Bot>().SetMaterial(botMaterialStorage.GetRandom());
+        bot.GetComponent<Bot>().InitializeGameController(this);
     }
     /// <summary>
     /// Spawns a bot with determined material
@@ -72,6 +78,7 @@ public class GameController : MonoBehaviour
         Vector3 spawnVec = new Vector3(spawnZone.x, 0, spawnZone.z);
         var bot = Instantiate(botPrefab, spawnVec, Quaternion.identity, botContainer);
         bot.GetComponent<Bot>().SetMaterial(botMaterialStorage.GetMaterialByIndex(materialIndex));
+        bot.GetComponent<Bot>().InitializeGameController(this);
     }
 
     void Update()
@@ -84,6 +91,8 @@ public class GameController : MonoBehaviour
                 if (!hit.collider.TryGetComponent(out NotPlacebleArea notPlaceble))
                 {
                     SpawnBot(hit.point);
+                    NewBotAdded?.Invoke();
+
                 }
             }
         }

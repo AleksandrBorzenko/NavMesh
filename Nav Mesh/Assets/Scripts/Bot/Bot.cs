@@ -67,6 +67,11 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour,IPlayer
     private NavMeshAgent navMeshAgent;
     private NavMeshPath navMeshPath;
 
+    /// <summary>
+    /// Reference of gamecontroller in order to subscribe for event of new bot adding
+    /// </summary>
+    private GameController gameController;
+
     void Awake()
     {
         TargetLost = new UnityEvent();
@@ -74,6 +79,20 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour,IPlayer
         healthChanged = new UnityEvent<int>();
         navMeshAgent = GetComponent<NavMeshAgent>();
         navMeshPath = new NavMeshPath();
+    }
+    /// <summary>
+    /// Initializing GameController and adding a listener for new bots
+    /// </summary>
+    /// <param name="gameController">Reference of GameController</param>
+    public void InitializeGameController(GameController gameController)
+    {
+        this.gameController = gameController;
+        this.gameController.NewBotAdded.AddListener(IsStayingFalse);
+    }
+
+    private void IsStayingFalse()
+    {
+        isStaying = false;
     }
 
     void Start()
