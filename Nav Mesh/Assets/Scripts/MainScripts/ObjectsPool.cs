@@ -23,7 +23,6 @@ public class ObjectsPool : IObjectsPool
     public void AddBot(Bot bot)
     {
         BotsList.Add(bot);
-        Debug.Log(BotsList.Count);
     }
     /// <summary>
     /// Remove the oldest bot from the list
@@ -32,6 +31,5 @@ public class ObjectsPool : IObjectsPool
     {
         if(!isEmpty)
             BotsList.RemoveAt(0);
-        Debug.Log(BotsList.Count);
     }
 }

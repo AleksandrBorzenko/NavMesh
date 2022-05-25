@@ -10,6 +10,12 @@ using UnityEngine.EventSystems;
 /// </summary>
 public class GameController : MonoBehaviour
 {
+    private readonly string bot = "Bot ";
+    /// <summary>
+    /// It's a value to count bots
+    /// </summary>
+    private int botOrder = 1;
+
     private BotMaterialStorage botMaterialStorage;
     /// <summary>
     /// The zones in which bots will be spawned
@@ -68,6 +74,8 @@ public class GameController : MonoBehaviour
         var bot = Instantiate(botPrefab, spawnZone,Quaternion.identity, botContainer);
         bot.GetComponent<Bot>().SetMaterial(botMaterialStorage.GetRandom());
         bot.GetComponent<Bot>().InitializeGameController(this);
+        bot.GetComponent<Bot>().botInfo.SetName(this.bot+botOrder);
+        botOrder++;
     }
     /// <summary>
     /// Spawns a bot with determined material
@@ -80,6 +88,8 @@ public class GameController : MonoBehaviour
         var bot = Instantiate(botPrefab, spawnVec, Quaternion.identity, botContainer);
         bot.GetComponent<Bot>().SetMaterial(botMaterialStorage.GetMaterialByIndex(materialIndex));
         bot.GetComponent<Bot>().InitializeGameController(this);
+        bot.GetComponent<Bot>().botInfo.SetName(this.bot + botOrder);
+        botOrder++;
     }
     /// <summary>
     /// Spawns a bot from the pool

@@ -26,6 +26,12 @@ public class BotInfo : IBotInfo
     /// The number of destroyed opponents
     /// </summary>
     public int score { get; private set; }
+
+    /// <summary>
+    /// Bot's name
+    /// </summary>
+    public string name { get; set; }
+
     /// <summary>
     /// Decreases the health of the bot from the amount of taken damage
     /// </summary>
@@ -84,9 +90,19 @@ public class BotInfo : IBotInfo
     {
         velocity = Random.Range(minVelocity, maxVelocity);
     }
-
+    /// <summary>
+    /// Set score of bot to 0
+    /// </summary>
     public void SetScoreToZero()
     {
         score = 0;
+    }
+    /// <summary>
+    /// Set bot's name
+    /// </summary>
+    /// <param name="name">Name</param>
+    public void SetName(string name)
+    {
+        this.name = name;
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 /// </summary>
 public interface IBotInfo
 {
+    string name { get; set; }
     int damage { get; }
     int health { get; }
     int velocity { get; }
@@ -17,4 +18,5 @@ public interface IBotInfo
     void IncreaseScore();
     void IncreaseDamage(int amount);
     void SetScoreToZero();
+    void SetName(string name);
 }
