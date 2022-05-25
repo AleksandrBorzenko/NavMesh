@@ -54,7 +54,7 @@ public class GameController : MonoBehaviour
         bot.GetComponent<Bot>().SetMaterial(botMaterialStorage.GetRandom());
     }
     /// <summary>
-    /// 
+    /// Spawns a bot with determined material
     /// </summary>
     /// <param name="spawnZone">Zones on the scene</param>
     /// <param name="materialIndex">To call a method GetMaterialByIndex</param>
