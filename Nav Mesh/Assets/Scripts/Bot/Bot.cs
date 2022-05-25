@@ -8,33 +8,62 @@ using UnityEngine.Events;
 /// </summary>
 public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour,IPlayer
 {
+    /// <summary>
+    /// Minimum and maximum damage
+    /// </summary>
     private readonly int minDamage = 1;
     private readonly int maxDamage = 6;
-
+    /// <summary>
+    /// Minimum and maximum health
+    /// </summary>
     private readonly int minHealth = 10;
     private readonly int maxHealth = 20;
-
+    /// <summary>
+    /// Minimum and maximum velocity
+    /// </summary>
     private readonly int minVelocity = 1;
     private readonly int maxVelocity = 3;
-
+    /// <summary>
+    /// This module contains an information of bot (damage, health, score and etc.)
+    /// </summary>
     public readonly BotInfo botInfo = new BotInfo();
     /// <summary>
     /// It's a sign from ITarget
     /// </summary>
     public Bot targetSign => this;
-
+    /// <summary>
+    /// Bot's current position
+    /// </summary>
     public Vector3 position => transform.position;
-
+    /// <summary>
+    /// The cooldown time for an attack
+    /// </summary>
     public int DelayForDoDamage => 2;
-
+    /// <summary>
+    /// Tells the bot if he can attack now
+    /// </summary>
     public bool canDamage { get; set; } = true;
+    /// <summary>
+    /// Event called when the target of the bot is being lost
+    /// </summary>
     public UnityEvent TargetLost { get; set; }
+    /// <summary>
+    /// If there are no targets isStaying will be true. Bot will stay and wait.
+    /// </summary>
     public bool isStaying { get; set; }
+    /// <summary>
+    /// When bot destroys an opponent this event will be called
+    /// </summary>
     public UnityEvent<int> scoreChanged { get; set; }
+    /// <summary>
+    /// When the health points of bot is changed this event will be called
+    /// </summary>
     public UnityEvent<int> healthChanged { get; set; }
 
     private readonly BotTargetSearcher botTargetSearcher = new BotTargetSearcher();
-
+    /// <summary>
+    /// NavMesh components
+    /// </summary>
     private NavMeshAgent navMeshAgent;
     private NavMeshPath navMeshPath;
 
@@ -151,7 +180,7 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour,IPlayer
             isStaying = true;
             return;
         }
-        botTargetSearcher.GetNearestTarget(transform.position, targets);
+        botTargetSearcher.GetNearestTarget(position, targets);
         botTargetSearcher.BotTarget.targetSign.TargetLost.AddListener(TargetSign_TargetLost);
         Move();
     }
@@ -166,7 +195,7 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour,IPlayer
     /// </summary>
     public void Move()
     {
-        if (navMeshAgent.CalculatePath(transform.position, navMeshPath))
+        if (navMeshAgent.CalculatePath(position, navMeshPath))
             navMeshAgent.SetDestination(botTargetSearcher.BotTarget.position);
     }
 }

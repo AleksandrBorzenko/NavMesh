@@ -6,14 +6,25 @@ using UnityEngine;
 /// </summary>
 public class BotInfo : IBotInfo
 {
+    /// <summary>
+    /// Current damage of bot
+    /// </summary>
     public int damage { get; private set; }
-
+    /// <summary>
+    /// Current health of bot
+    /// </summary>
     public int health { get; private set; }
-
+    /// <summary>
+    /// Current velocity of bot
+    /// </summary>
     public int velocity { get; private set; }
-
+    /// <summary>
+    /// If bot is on the scene or not
+    /// </summary>
     public bool isAlive { get; set; } = true;
-
+    /// <summary>
+    /// The number of destroyed opponents
+    /// </summary>
     public int score { get; private set; }
     /// <summary>
     /// Decreases the health of the bot from the amount of taken damage
