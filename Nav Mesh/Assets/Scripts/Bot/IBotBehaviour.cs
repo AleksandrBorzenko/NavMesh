@@ -14,5 +14,6 @@ public interface IBotBehaviour
     void Move();
     UnityEvent TargetLost { get; set; }
     bool isStaying { get; set; }
+    void SendBotToObjectsPool();
 
 }

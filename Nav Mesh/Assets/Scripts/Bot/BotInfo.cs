@@ -84,4 +84,9 @@ public class BotInfo : IBotInfo
     {
         velocity = Random.Range(minVelocity, maxVelocity);
     }
+
+    public void SetScoreToZero()
+    {
+        score = 0;
+    }
 }

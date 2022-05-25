@@ -7,4 +7,5 @@ public interface IBotTargetSearcher
 {
     List<ITarget<Bot>> GetTargets();
     bool hasTarget { get; }
+    void SetTargetToNull();
 }

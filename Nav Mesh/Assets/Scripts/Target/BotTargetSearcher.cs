@@ -51,4 +51,9 @@ public class BotTargetSearcher : IBotTargetSearcher
         BotTarget = targets[index];
         hasTarget = true;
     }
+
+    public void SetTargetToNull()
+    {
+        BotTarget = null;
+    }
 }

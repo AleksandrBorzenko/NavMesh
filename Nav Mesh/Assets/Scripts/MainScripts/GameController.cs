@@ -37,6 +37,8 @@ public class GameController : MonoBehaviour
     /// </summary>
     public UnityEvent NewBotAdded;
 
+    public readonly ObjectsPool objectsPool = new ObjectsPool();
+
     void Awake()
     {
         cam = Camera.main;
@@ -60,10 +62,9 @@ public class GameController : MonoBehaviour
     /// <summary>
     /// This method will spawn bot from clicking at the screen
     /// </summary>
-    /// <param name="spawnZone">Input position</param>
+    /// <param name="spawnZone">Hit position</param>
     void SpawnBot(Vector3 spawnZone)
     {
-        //Vector3 spawnVec = new Vector3(spawnZone.x, 0, spawnZone.z);
         var bot = Instantiate(botPrefab, spawnZone,Quaternion.identity, botContainer);
         bot.GetComponent<Bot>().SetMaterial(botMaterialStorage.GetRandom());
         bot.GetComponent<Bot>().InitializeGameController(this);
@@ -80,6 +81,18 @@ public class GameController : MonoBehaviour
         bot.GetComponent<Bot>().SetMaterial(botMaterialStorage.GetMaterialByIndex(materialIndex));
         bot.GetComponent<Bot>().InitializeGameController(this);
     }
+    /// <summary>
+    /// Spawns a bot from the pool
+    /// </summary>
+    /// <param name="spawnZone">Hit position</param>
+    void SpawnBotFromPool(Vector3 spawnZone)
+    {
+        objectsPool.BotsList[0].SetBotData();
+        objectsPool.BotsList[0].transform.position = spawnZone;
+        objectsPool.BotsList[0].gameObject.SetActive(true);
+        objectsPool.BotsList[0].FindTarget();
+        objectsPool.RemoveBot();
+    }
 
     void Update()
     {
@@ -90,7 +103,12 @@ public class GameController : MonoBehaviour
             {
                 if (!hit.collider.TryGetComponent(out NotPlacebleArea notPlaceble))
                 {
-                    SpawnBot(hit.point);
+                    if(objectsPool.isEmpty)
+                        SpawnBot(hit.point);
+                    else
+                    {
+                        SpawnBotFromPool(hit.point);
+                    }
                     NewBotAdded?.Invoke();
 
                 }

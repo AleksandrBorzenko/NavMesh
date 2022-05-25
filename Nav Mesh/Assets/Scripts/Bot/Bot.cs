@@ -74,9 +74,7 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour,IPlayer
 
     void Awake()
     {
-        TargetLost = new UnityEvent();
-        scoreChanged = new UnityEvent<int>();
-        healthChanged = new UnityEvent<int>();
+        NewUnityEvents();
         navMeshAgent = GetComponent<NavMeshAgent>();
         navMeshPath = new NavMeshPath();
     }
@@ -186,7 +184,7 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour,IPlayer
             sender.botInfo.IncreaseDamage(botInfo.damage);
             sender.scoreChanged?.Invoke(sender.botInfo.score);
             TargetLost?.Invoke();
-            Destroy(gameObject); // To Objects pool
+            SendBotToObjectsPool();
         }
     }
     /// <summary>
@@ -217,6 +215,33 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour,IPlayer
     {
         if (navMeshAgent.CalculatePath(position, navMeshPath))
             navMeshAgent.SetDestination(botTargetSearcher.BotTarget.position);
+    }
+    /// <summary>
+    /// This method will send destroyed bot to the pool and set start parameters
+    /// </summary>
+    public void SendBotToObjectsPool()
+    {
+        RestoreParams();
+        gameController.objectsPool.AddBot(this);
+        gameObject.SetActive(false);
+    }
+
+    void RestoreParams()
+    {
+        canDamage = true;
+        isStaying = false;
+        botInfo.SetScoreToZero();
+        scoreChanged?.Invoke(botInfo.score);
+        botInfo.isAlive = true;
+        botTargetSearcher.hasTarget = false;
+        TargetLost = new UnityEvent();
+    }
+
+    void NewUnityEvents()
+    {
+        TargetLost = new UnityEvent();
+        scoreChanged = new UnityEvent<int>();
+        healthChanged = new UnityEvent<int>();
     }
 }
 

@@ -16,4 +16,5 @@ public interface IBotInfo
     void SetHealthToZero();
     void IncreaseScore();
     void IncreaseDamage(int amount);
+    void SetScoreToZero();
 }
