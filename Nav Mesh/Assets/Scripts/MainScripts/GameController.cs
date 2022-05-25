@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+
 /// <summary>
 /// Controls the game process
 /// </summary>
@@ -25,8 +27,14 @@ public class GameController : MonoBehaviour
     /// </summary>
     [SerializeField]private int botNumber;
 
+    /// <summary>
+    /// Caching main camera
+    /// </summary>
+    private Camera cam;
+
     void Awake()
     {
+        cam = Camera.main;
         botMaterialStorage = new BotMaterialStorage();
         botMaterialStorage.AddMaterials();
         botPrefab = Resources.Load<GameObject>("Prefabs/Bot");
@@ -50,6 +58,7 @@ public class GameController : MonoBehaviour
     /// <param name="spawnZone">Input position</param>
     void SpawnBot(Vector3 spawnZone)
     {
+        //Vector3 spawnVec = new Vector3(spawnZone.x, 0, spawnZone.z);
         var bot = Instantiate(botPrefab, spawnZone,Quaternion.identity, botContainer);
         bot.GetComponent<Bot>().SetMaterial(botMaterialStorage.GetRandom());
     }
@@ -63,5 +72,30 @@ public class GameController : MonoBehaviour
         Vector3 spawnVec = new Vector3(spawnZone.x, 0, spawnZone.z);
         var bot = Instantiate(botPrefab, spawnVec, Quaternion.identity, botContainer);
         bot.GetComponent<Bot>().SetMaterial(botMaterialStorage.GetMaterialByIndex(materialIndex));
+    }
+
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0) && !isMouseOverUI())
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out hit))
+            {
+                if (!hit.collider.TryGetComponent(out NotPlacebleArea notPlaceble))
+                {
+                    SpawnBot(hit.point);
+                }
+            }
+        }
+    }
+
+    private bool isMouseOverUI()
+    {
+#if UNITY_EDITOR
+        return EventSystem.current.IsPointerOverGameObject();
+
+#elif UNITY_ANDROID
+        return EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId);
+#endif
     }
 }
