@@ -88,7 +88,7 @@ public class Bot : MonoBehaviour, ITarget<Bot>, IBotBehaviour,IPlayer
         this.gameController.NewBotAdded.AddListener(IsStayingFalse);
     }
 
-    private void IsStayingFalse()
+    private void IsStayingFalse(Bot bot)
     {
         isStaying = false;
     }

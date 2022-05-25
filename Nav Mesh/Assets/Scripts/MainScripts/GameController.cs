@@ -41,9 +41,10 @@ public class GameController : MonoBehaviour
     /// <summary>
     /// Event which is called when new bot added on scene
     /// </summary>
-    public UnityEvent NewBotAdded;
+    [HideInInspector] public UnityEvent<Bot> NewBotAdded;
 
     public readonly ObjectsPool objectsPool = new ObjectsPool();
+    [SerializeField] private Leaderboard leaderboard;
 
     void Awake()
     {
@@ -51,6 +52,7 @@ public class GameController : MonoBehaviour
         botMaterialStorage = new BotMaterialStorage();
         botMaterialStorage.AddMaterials();
         botPrefab = Resources.Load<GameObject>("Prefabs/Bot");
+        leaderboard.InitializeLeaderboard(this);
     }
     /// <summary>
     /// Spawning bots
@@ -75,6 +77,7 @@ public class GameController : MonoBehaviour
         bot.GetComponent<Bot>().SetMaterial(botMaterialStorage.GetRandom());
         bot.GetComponent<Bot>().InitializeGameController(this);
         bot.GetComponent<Bot>().botInfo.SetName(this.bot+botOrder);
+        NewBotAdded?.Invoke(bot.GetComponent<Bot>());
         botOrder++;
     }
     /// <summary>
@@ -89,6 +92,7 @@ public class GameController : MonoBehaviour
         bot.GetComponent<Bot>().SetMaterial(botMaterialStorage.GetMaterialByIndex(materialIndex));
         bot.GetComponent<Bot>().InitializeGameController(this);
         bot.GetComponent<Bot>().botInfo.SetName(this.bot + botOrder);
+        NewBotAdded?.Invoke(bot.GetComponent<Bot>());
         botOrder++;
     }
     /// <summary>
@@ -101,6 +105,7 @@ public class GameController : MonoBehaviour
         objectsPool.BotsList[0].transform.position = spawnZone;
         objectsPool.BotsList[0].gameObject.SetActive(true);
         objectsPool.BotsList[0].FindTarget();
+        NewBotAdded?.Invoke(objectsPool.BotsList[0]);
         objectsPool.RemoveBot();
     }
 
@@ -119,8 +124,6 @@ public class GameController : MonoBehaviour
                     {
                         SpawnBotFromPool(hit.point);
                     }
-                    NewBotAdded?.Invoke();
-
                 }
             }
         }
